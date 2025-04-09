@@ -45,9 +45,9 @@ export class UsersService {
   }
 
   async generateUserTokens(userId: string) {
-    const acessToken = this.jwtService.sign({ userId }, { expiresIn: '1h' });
+    const accessToken = this.jwtService.sign({ userId }, { expiresIn: '1h' });
     return {
-      acessToken,
+      accessToken,
     };
   }
 

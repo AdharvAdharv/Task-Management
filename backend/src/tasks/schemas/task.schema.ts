@@ -3,11 +3,8 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Task {
-  @Prop({ required: true })
+  @Prop({ required: true })   
   title: string;
-
-  @Prop()
-  description: string;
 
   @Prop({ default: false })
   completed: boolean;

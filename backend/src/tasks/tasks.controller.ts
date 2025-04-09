@@ -3,7 +3,6 @@ import { Controller, Post, Get, Body, Delete, Param, UseGuards } from '@nestjs/c
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard';
-import { User } from '../users/schemas/user.schema';
 import { UserDocument } from '../users/schemas/user.schema';
 import { GetUser } from 'src/users/guards/ get-user.decorator';
 

@@ -3,17 +3,43 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FontAwesome, AntDesign, Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+
+
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    if (email && password) {
+ 
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:3000/users/login', {
+
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Alert.alert('Login Failed', data.message || 'Unknown error');
+        return;
+      }
+
+      // Save token manually
+      await AsyncStorage.setItem('token', data.acessToken);
+      Alert.alert('Success', 'Logged in successfully!');
       router.replace('/homepage');
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong');
+      console.error(error);
     }
   };
+
 
   return (
     <View style={styles.container}>
@@ -36,6 +62,7 @@ export default function LoginScreen() {
           placeholder="Username"
           value={email}
           onChangeText={setEmail}
+          autoCapitalize="none" 
         />
       </View>
 
@@ -55,7 +82,7 @@ export default function LoginScreen() {
 
       {/* Sign In Button */}
       <TouchableOpacity style={styles.signinButton} onPress={handleLogin}>
-        <Text style={styles.signinText}>Sign in</Text>
+        <Text style={styles.signinText}>Log in</Text>
       </TouchableOpacity>
 
       
