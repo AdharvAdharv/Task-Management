@@ -9,7 +9,10 @@ export default function Homepage() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:3000/tasks");
+        const res = await fetch("http://127.0.0.1:3000/tasks", {
+          method: "GET",
+          credentials: "include",
+        });
         const data = await res.json();
         console.log("Fetched data :",data);
         
@@ -52,7 +55,7 @@ export default function Homepage() {
 
         <FlatList
           data={tasks}
-          // keyExtractor={(item) => item.id?.toString()}
+          keyExtractor={(item) => item.id?.toString()}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 100 }}
         />

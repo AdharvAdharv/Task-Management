@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 
 export default function AddTask() {
   const [task, setTask] = useState("");
+  const [description, setDescription] = useState("");
   const router = useRouter();
 
   const handleAddTask = async () => {
@@ -27,7 +28,7 @@ export default function AddTask() {
           "Content-Type": "application/json",
          
         },
-        body: JSON.stringify({ title: task }),
+        body: JSON.stringify({ title: task ,description }),
         credentials: "include",
       });
 
@@ -36,6 +37,7 @@ export default function AddTask() {
       if (res.ok) {
         Alert.alert("Success", "Task added successfully!");
         setTask("");
+        setDescription("");
         router.back(); 
       } else {
         Alert.alert("Error", data.message || "Failed to add task.");
@@ -55,6 +57,15 @@ export default function AddTask() {
         value={task}
         onChangeText={setTask}
       />
+
+<Text style={styles.label}>Task Description:</Text>
+<TextInput
+  style={styles.input}
+  placeholder="Type task description..."
+  value={description}
+  onChangeText={setDescription}
+/>
+
 
       <TouchableOpacity style={styles.button} onPress={handleAddTask}>
         <Text style={styles.buttonText}>Add Task</Text>

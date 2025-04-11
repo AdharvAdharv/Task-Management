@@ -25,6 +25,8 @@ export default function LoginScreen() {
       });
 
       const data = await response.json();
+      console.log(data);
+      
 
       if (!response.ok) {
         Alert.alert('Login Failed', data.message || 'Unknown error');
