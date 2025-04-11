@@ -20,6 +20,7 @@ export default function LoginScreen() {
 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
@@ -30,8 +31,7 @@ export default function LoginScreen() {
         return;
       }
 
-      // Save token manually
-      await AsyncStorage.setItem('token', data.acessToken);
+   
       Alert.alert('Success', 'Logged in successfully!');
       router.replace('/homepage');
     } catch (error) {
@@ -45,7 +45,7 @@ export default function LoginScreen() {
     <View style={styles.container}>
       {/* Image illustration */}
       <Image
-        source={require('../assets/images/Background-Image.jpeg')} // Replace with your image
+        source={require('../assets/images/Background-Image.jpeg')} 
         style={styles.image}
         resizeMode="contain"
       />

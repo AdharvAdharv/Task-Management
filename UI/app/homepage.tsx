@@ -1,55 +1,146 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import {View,Text,  FlatList,StyleSheet,ImageBackground,TouchableOpacity, Image,} from "react-native";
+import { useRouter } from "expo-router";
 
-export default function Index() {
-  const [task, setTask] = useState("");
-  const [tasks, setTasks] = useState<{ id: string; text: string }[]>([]);
+export default function Homepage() {
+  const [tasks, setTasks] = useState([]);
+  const router = useRouter();
 
-  const addTask = () => {
-    if (task.trim() !== "") {
-      setTasks([...tasks, { id: Date.now().toString(), text: task }]);
-      setTask("");
-    }
-  };
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await fetch("http://127.0.0.1:3000/tasks");
+        const data = await res.json();
+        console.log("Fetched data :",data);
+        
+        setTasks(data);
+      } catch (err) {
+        console.error("Failed to fetch tasks:", err);
+      }
+    };
 
-  // ✅ Function to delete a task
-  const deleteTask = (taskId: string) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
-  };
+    fetchTasks();
+  }, []);
+
+  const renderItem = ({  }) => (
+    <View style={styles.taskCard}>
+      <Text style={styles.taskText}>hello</Text>
+    </View>
+  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Task Manager</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Task"
-        value={task}
-        onChangeText={setTask}
-      />
-      <Button title="Add Task" onPress={addTask} />
-      
-      <FlatList
-        data={tasks}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.taskContainer}>
-            <Text style={styles.task}>{item.text}</Text>
-            <TouchableOpacity onPress={() => deleteTask(item.id)} style={styles.deleteButton}>
-              <Text style={styles.deleteText}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-    </View>
+    <ImageBackground
+      source={require("../assets/images/Background-Image.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
+
+<View style={styles.profileContainer}>
+  <Image
+    source={require("../assets/images/Background-Image.jpeg")}
+    style={styles.avatar}
+  />    
+  <View>
+    <Text style={styles.name}>Batman</Text>
+    <Text style={styles.email}>batman@wayne.com</Text>
+  </View>
+</View>
+
+
+      <View style={styles.overlay}>
+        <Text style={styles.heading}>My Tasks</Text>
+
+        <FlatList
+          data={tasks}
+          // keyExtractor={(item) => item.id?.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={{ paddingBottom: 100 }}
+        />
+
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => router.push("/add-task")}
+        >
+          <Text style={styles.addButtonText}>+ Add Task</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: "center" },
-  heading: { fontSize: 24, fontWeight: "bold", marginBottom: 10, textAlign: "center" },
-  input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 5 },
-  taskContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 10, borderBottomWidth: 1 },
-  task: { fontSize: 18 },
-  deleteButton: { padding: 5 },
-  deleteText: { fontSize: 20, color: "red" }
-});
+    background: {
+      flex: 1,
+      width: "100%",
+      height: "100%",
+    },
+    overlay: {
+      flex: 1,
+      backgroundColor: "rgba(255, 255, 255, 0.9)", 
+      padding: 20,
+      paddingTop: 60,
+    },
+    heading: {
+      fontSize: 30,
+      fontWeight: "bold",
+      color: "#333",
+      textAlign: "center",
+      marginBottom: 20,
+    },
+    taskCard: {
+      backgroundColor: "#fff",
+      padding: 15,
+      borderRadius: 12,
+      marginBottom: 10,
+      elevation: 4,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+    },
+    taskText: {
+      fontSize: 18,
+      color: "#333",
+    },
+    addButton: {
+      position: "absolute",
+      bottom: 30,
+      right: 30,
+      backgroundColor: "#32CD32",
+      paddingVertical: 14,
+      paddingHorizontal: 20,
+      borderRadius: 30,
+      elevation: 5,
+    },
+    addButtonText: {
+      color: "#fff",
+      fontWeight: "bold",
+      fontSize: 16,
+    },
+    profileContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        alignSelf: "flex-end",
+        backgroundColor: "#ffffffcc",
+        borderRadius: 20,
+        padding: 10,
+        marginBottom: 10,
+      },
+      avatar: {
+        width: 45,
+        height: 45,
+        borderRadius: 25,
+        marginRight: 10,
+      },
+      name: {
+        fontWeight: "bold",
+        fontSize: 14,
+        color: "#333",
+      },
+      email: {
+        fontSize: 12,
+        color: "#555",
+      },
+    
+  });
+  

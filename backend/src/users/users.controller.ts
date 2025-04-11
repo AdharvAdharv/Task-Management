@@ -23,11 +23,12 @@ export class UsersController {
     const { accessToken } = await this.usersService.login(loginDto);
     
     // Set cookie
-    res.cookie('token', accessToken, {
+    res.cookie('jwt', accessToken, {
       httpOnly: true,
       secure: false, // change to true in production with HTTPS
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000, // 1 hour
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+
     });
 
     return { message: 'Login successful' };
@@ -37,4 +38,11 @@ export class UsersController {
   getProfile(@GetUser() user){
     return user;
   }
+
+  @Post('logout')
+@HttpCode(200)
+logout(@Res({ passthrough: true }) res: Response) {
+  res.clearCookie('jwt');
+  return { message: 'Logout successful' };
+}
 } 

@@ -9,11 +9,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private configService: ConfigService,
     private userService: UsersService,
-  ) {
+  ) {  
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get<string>('SECRET_KEY') || 'default_secret_key', // fallback added
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req) => req?.cookies?.['jwt'], // <- This matches the cookie name from your login response
+      ]),
+      secretOrKey: configService.get<string>('SECRET_KEY') || 'default_secret_key',
     });
+    
   }
 
   async validate(payload: { userId: string }) {

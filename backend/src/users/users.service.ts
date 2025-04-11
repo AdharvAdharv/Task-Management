@@ -15,7 +15,7 @@ export class UsersService {
   ) {}
 
   async signup(signupDto: SignupDto) {
-    const { username, email, password } = signupDto;
+    const { name, email, password } = signupDto;
 
     const existingUser = await this.userModel.findOne({ email });
     if (existingUser) {
@@ -24,7 +24,7 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(password,10);
 
-    const user = new this.userModel({ username, email, password: hashedPassword });
+    const user = new this.userModel({ name, email, password: hashedPassword });
     return user.save();
   }
 
