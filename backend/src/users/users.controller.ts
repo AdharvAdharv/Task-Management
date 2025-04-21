@@ -31,7 +31,9 @@ export class UsersController {
 
     });
 
-    return { message: 'Login successful' };
+    return { message: 'Login is successful',
+      token: accessToken,
+     };
   }
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))

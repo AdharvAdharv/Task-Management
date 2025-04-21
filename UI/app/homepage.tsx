@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
 import {View,Text,  FlatList,StyleSheet,ImageBackground,TouchableOpacity, Image,} from "react-native";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "expo-router";
 
 export default function Homepage() {
   const [tasks, setTasks] = useState([]);
   const router = useRouter();
 
-  useEffect(() => {
+  useFocusEffect(
+    React.useCallback(() => {
     const fetchTasks = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:3000/tasks", {
+        const res = await fetch("http://192.168.26.231:3000/tasks", {
           method: "GET",
           credentials: "include",
         });
         const data = await res.json();
         console.log("Fetched data :",data);
+        console.log("Is array:", Array.isArray(data));
+
         
         setTasks(data);
       } catch (err) {
@@ -23,17 +27,22 @@ export default function Homepage() {
     };
 
     fetchTasks();
-  }, []);
+  }, [])
+);
 
-  const renderItem = ({  }) => (
+  const renderItem = ({ item }) => (
     <View style={styles.taskCard}>
-      <Text style={styles.taskText}>hello</Text>
+      <Text style={styles.taskText}>{item.title}</Text>
+      {item.description ? (
+        <Text style={{ color: "#777", marginTop: 5 }}>{item.description}</Text>
+      ) : null}
     </View>
   );
+  
 
   return (
     <ImageBackground
-      source={require("../assets/images/Background-Image.png")}
+      source={require("../assets/images/Wallpaper.jpeg")}
       style={styles.background}
       resizeMode="cover"
     >
@@ -48,14 +57,14 @@ export default function Homepage() {
     <Text style={styles.email}>batman@wayne.com</Text>
   </View>
 </View>
-
+    
 
       <View style={styles.overlay}>
         <Text style={styles.heading}>My Tasks</Text>
 
         <FlatList
-          data={tasks}
-          keyExtractor={(item) => item.id?.toString()}
+          data={tasks}  
+          keyExtractor={(item) => item._id.toString()}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 100 }}
         />

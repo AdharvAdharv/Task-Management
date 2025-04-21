@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AddTask() {
   const [task, setTask] = useState("");
@@ -22,14 +23,18 @@ export default function AddTask() {
 
 
     try {
-      const res = await fetch("http://localhost:3000/tasks", {
+      const token = await AsyncStorage.getItem("token");
+      console.log("Token used:", token);
+
+      const res = await fetch("http://192.168.26.231:3000/tasks", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
          
         },
         body: JSON.stringify({ title: task ,description }),
-        credentials: "include",
+        
       });
 
       const data = await res.json();

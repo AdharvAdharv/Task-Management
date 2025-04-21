@@ -16,7 +16,7 @@ export default function LoginScreen() {
  
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:3000/users/login', {
+      const response = await fetch('http://192.168.26.231:3000/users/login', {
 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -33,7 +33,7 @@ export default function LoginScreen() {
         return;
       }
 
-   
+      await AsyncStorage.setItem("token", data.token); 
       Alert.alert('Success', 'Logged in successfully!');
       router.replace('/homepage');
     } catch (error) {
