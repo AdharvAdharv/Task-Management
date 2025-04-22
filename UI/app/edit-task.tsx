@@ -1,25 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 export default function EditTask() {
-  const { id } = useLocalSearchParams();
+  const { id, title, description } = useLocalSearchParams();
   const router = useRouter();
-  const [task, setTask] = useState({ title: "", description: "" });
 
-  useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const res = await fetch(`http://192.168.26.231:3000/tasks/${id}`);
-        const data = await res.json();
-        setTask({ title: data.title, description: data.description || "" });
-      } catch (error) {
-        console.error("Failed to fetch task:", error);
-      }
-    };
-
-    fetchTask();
-  }, [id]);
+  const [taskTitle, setTaskTitle] = useState( typeof title === "string" ? title : "");
+  const [taskDescription, setTaskDescription] = useState(typeof description === "string" ? description : "");
 
   const handleUpdate = async () => {
     try {
@@ -28,12 +23,15 @@ export default function EditTask() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(task),
+        body: JSON.stringify({
+          title: taskTitle,
+          description: taskDescription,
+        }),
       });
 
       if (res.ok) {
         Alert.alert("Success", "Task updated successfully");
-        router.back(); // Go back to homepage
+        router.back();
       } else {
         Alert.alert("Error", "Failed to update task");
       }
@@ -48,15 +46,15 @@ export default function EditTask() {
       <TextInput
         style={styles.input}
         placeholder="Title"
-        value={task.title}
-        onChangeText={(text) => setTask({ ...task, title: text })}
+        value={taskTitle}
+        onChangeText={setTaskTitle}
       />
       <TextInput
         style={[styles.input, { height: 100 }]}
         placeholder="Description"
         multiline
-        value={task.description}
-        onChangeText={(text) => setTask({ ...task, description: text })}
+        value={taskDescription}
+        onChangeText={setTaskDescription}
       />
 
       <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
@@ -65,6 +63,7 @@ export default function EditTask() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

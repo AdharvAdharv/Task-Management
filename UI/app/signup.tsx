@@ -1,4 +1,3 @@
-// app/signup.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -20,7 +19,7 @@ export default function SignupScreen() {
   const handleSignup = async() => {
     if (name && email && password) {
       try {
-        const res = await fetch("http://127.0.0.1:3000/users/signup", {
+        const res = await fetch("http://192.168.26.231:3000/users/signup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -13,7 +13,7 @@ export class Task {
   completed: boolean;
 
   @Prop({ required: true })
-  userId: string; // Link to the user
+  userId: string; 
 }
 
 export type TaskDocument = Task & Document;
