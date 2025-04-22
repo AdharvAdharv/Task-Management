@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {  
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req) => req?.cookies?.['jwt'], // <- This matches the cookie name from your login response
+        (req) => req?.cookies?.['jwt'], 
       ]),
       secretOrKey: configService.get<string>('SECRET_KEY') || 'default_secret_key',
     });

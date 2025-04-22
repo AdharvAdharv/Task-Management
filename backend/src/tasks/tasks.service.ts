@@ -5,6 +5,8 @@ import { Task, TaskDocument } from './schemas/task.schema';
 import { Model } from 'mongoose';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { NotFoundException } from '@nestjs/common';
+
 
 @Injectable()
 export class TasksService {
@@ -25,6 +27,16 @@ export class TasksService {
       { new: true }
     );
   }
+  
+  async updateCompleted(id: string, completed: boolean) {
+    const task = await this.taskModel.findById(id);
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+    task.completed = completed;
+    return task.save();
+  }
+  
   
 
 

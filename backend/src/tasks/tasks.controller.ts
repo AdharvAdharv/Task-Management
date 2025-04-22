@@ -32,6 +32,12 @@ update(
   return this.tasksService.update(id, updateTaskDto, user._id as string);
 }
 
+@Patch(':id/status')
+updateCompleted(@Param('id') id: string, @Body('completed') completed: boolean) {
+  return this.tasksService.updateCompleted(id, completed);
+}
+
+
 
   @Delete(':id')
   delete(@Param('id') id: string, @GetUser() user:  UserDocument) {

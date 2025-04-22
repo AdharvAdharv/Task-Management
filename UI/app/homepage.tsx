@@ -5,6 +5,8 @@ import { useFocusEffect } from "expo-router";
 
 export default function Homepage() {
   const [tasks, setTasks] = useState([]);
+  const [profile, setProfile] = useState(null);
+
   const router = useRouter();
 
   useFocusEffect(
@@ -28,7 +30,26 @@ export default function Homepage() {
   }, [])
 );
 
-  const renderItem = ({ item }) => (
+useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch("http://192.168.26.231:3000/users/profile", {
+        method: "GET",
+        credentials: "include", 
+      });
+      const data = await res.json();
+      console.log("Profile Data:", data);
+      setProfile(data);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+    }
+  };
+
+  fetchProfile();
+}, []);
+
+
+  const renderItem = ({item}) => (
     <View style={styles.taskCard}>
       <Text style={styles.taskText}>{item.title}</Text>
       {item.description ? (
@@ -45,6 +66,18 @@ export default function Homepage() {
       </TouchableOpacity>
 
       <TouchableOpacity
+  onPress={() => toggleStatus(item._id, item.completed)}
+  style={[
+    styles.statusButton,
+    { backgroundColor: item.completed ? "#32CD32" : "#FFA500" },
+  ]}
+>
+  <Text style={styles.statusText}>
+    {item.completed ? "✔ Completed" : "⏳ Pending"}
+  </Text>
+</TouchableOpacity>
+
+      <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => handleDelete(item._id)}
       >
@@ -54,6 +87,8 @@ export default function Homepage() {
 
     </View>
   );
+
+  
 
   const handleDelete = async (taskId) => {
     try {
@@ -70,6 +105,52 @@ export default function Homepage() {
       console.error("Error deleting task:", error);
     }
   };
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("http://192.168.26.231:3000/users/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+  
+      const data = await res.json();
+      console.log(data.message);
+  
+      // Navigate to login screen
+      router.replace("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+
+  const toggleStatus = async (id, currentCompleted) => {
+    const newCompleted = !currentCompleted;
+  
+    try {
+      const res = await fetch(`http://192.168.26.231:3000/tasks/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ completed: newCompleted }),
+      });
+  
+      const updated = await res.json();
+      console.log("Status updated:", updated);
+  
+      setTasks((prev) =>
+        prev.map((task) =>
+          task._id === id ? { ...task, completed: newCompleted } : task
+        )
+      );
+    } catch (err) {
+      console.error("Failed to toggle status:", err);
+    }
+  };
+  
+  
   
   
 
@@ -82,14 +163,20 @@ export default function Homepage() {
 
 <View style={styles.profileContainer}>
   <Image
-    source={require("../assets/images/Background-Image.jpeg")}
+    source={require("../assets/images/avatar-profile-picture-icon.jpg")}
     style={styles.avatar}
-  />    
+  />
   <View>
-    <Text style={styles.name}>Batman</Text>
-    <Text style={styles.email}>batman@wayne.com</Text>
+    <Text style={styles.name}>{profile?.name || "Loading..."}</Text>
+    <Text style={styles.email}>{profile?.email || ""}</Text>
   </View>
+<TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+  <Text style={styles.logoutText}>Logout</Text>
+</TouchableOpacity>
 </View>
+
+
+
     
 
       <View style={styles.overlay}>
@@ -209,6 +296,35 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontWeight: "bold",
       },
+      logoutButton: {
+        backgroundColor: "#ff4d4d",
+        padding: 8,
+        borderRadius: 8,
+        marginTop: 10,
+        marginLeft: 12,
+        alignSelf: "flex-end",
+      },
+      logoutText: {
+        color: "#fff",
+        fontWeight: "bold",
+      },
+
+      statusButton: {
+        marginTop: 10,
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 10,
+        alignSelf: "flex-start",
+        
+      },
+      
+      statusText: {
+        color: "#fff",
+        fontWeight: "600",
+        fontSize: 14,
+      },
+      
+      
       
     
   });
