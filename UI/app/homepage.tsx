@@ -17,8 +17,6 @@ export default function Homepage() {
         });
         const data = await res.json();
         console.log("Fetched data :",data);
-        console.log("Is array:", Array.isArray(data));
-
         
         setTasks(data);
       } catch (err) {
@@ -36,8 +34,43 @@ export default function Homepage() {
       {item.description ? (
         <Text style={{ color: "#777", marginTop: 5 }}>{item.description}</Text>
       ) : null}
+
+<View style={styles.buttonRow}>
+
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() => router.push({ pathname: "/edit-task", params: { id: item._id } })}
+      >
+        <Text style={styles.buttonText}>Edit</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => handleDelete(item._id)}
+      >
+        <Text style={styles.buttonText}>Delete</Text>
+      </TouchableOpacity>
+    </View>
+
     </View>
   );
+
+  const handleDelete = async (taskId) => {
+    try {
+      const res = await fetch(`http://192.168.26.231:3000/tasks/${taskId}`, {
+        method: "DELETE",
+      });
+  
+      if (res.ok) {
+        setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+      } else {
+        console.error("Failed to delete task.");
+      }
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };
+  
   
 
   return (
@@ -153,6 +186,30 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: "#555",
       },
+
+      buttonRow: {
+        flexDirection: "row",
+        marginTop: 10,
+        justifyContent: "space-between",
+      },
+      editButton: {
+        backgroundColor: "#1E90FF",
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+        marginRight: 10,
+      },
+      deleteButton: {
+        backgroundColor: "#FF6347",
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+      },
+      buttonText: {
+        color: "#fff",
+        fontWeight: "bold",
+      },
+      
     
   });
   
