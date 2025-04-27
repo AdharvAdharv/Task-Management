@@ -21,6 +21,9 @@ export default function Homepage() {
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [profile, setProfile] = useState({ name: "", email: "" });
+  const [selectedSection, setSelectedSection] = useState<
+    "all" | "pending" | "completed"
+  >("all");
 
   const router = useRouter();
 
@@ -170,6 +173,12 @@ export default function Homepage() {
     }
   };
 
+  const filteredTasks = tasks.filter((task) => {
+    if (selectedSection === "pending") return !task.completed;
+    if (selectedSection === "completed") return task.completed;
+    return true;
+  });
+
   return (
     <ImageBackground
       source={require("../assets/images/Wallpaper.jpeg")}
@@ -194,7 +203,7 @@ export default function Homepage() {
         <Text style={styles.heading}>My Tasks</Text>
 
         <FlatList
-          data={tasks}
+          data={filteredTasks}
           keyExtractor={(item) => item._id.toString()}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 100 }}
@@ -205,6 +214,40 @@ export default function Homepage() {
           onPress={() => router.push("/add-task")}
         >
           <Text style={styles.addButtonText}>+ Add Task</Text>
+        </TouchableOpacity>
+
+        
+      </View>
+
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={[
+            styles.footerButton,
+            selectedSection === "all" && styles.activeFooterButton,
+          ]}
+          onPress={() => setSelectedSection("all")}
+        >
+          <Text style={styles.footerButtonText}>All</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.footerButton,
+            selectedSection === "pending" && styles.activeFooterButton,
+          ]}
+          onPress={() => setSelectedSection("pending")}
+        >
+          <Text style={styles.footerButtonText}>Pending</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.footerButton,
+            selectedSection === "completed" && styles.activeFooterButton,
+          ]}
+          onPress={() => setSelectedSection("completed")}
+        >
+          <Text style={styles.footerButtonText}>Completed</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -247,7 +290,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: "absolute",
-    bottom: 30,
+    bottom: 80,
     right: 30,
     backgroundColor: "#32CD32",
     paddingVertical: 14,
@@ -332,5 +375,31 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontSize: 14,
+  },
+
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: 15,
+    backgroundColor: "#ffffffee",
+    borderTopWidth: 1,
+    borderTopColor: "#ccc",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    width: "100%",
+  },
+  footerButton: {
+    padding: 10,
+    borderRadius: 20,
+  },
+  activeFooterButton: {
+    backgroundColor: "#32CD32",
+  },
+  footerButtonText: {
+    fontSize: 16,
+    color: "#333",
+    fontWeight: "600",
   },
 });

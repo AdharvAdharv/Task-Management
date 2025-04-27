@@ -55,12 +55,12 @@ export default function LoginScreen() {
       <Text style={styles.title}>Hello,</Text>
       <Text style={styles.subtitle}>Welcome back again</Text>
 
-      {/* Username */}
+      {/* email */}
       <View style={styles.inputContainer}>
         <FontAwesome name="user" size={20} color="gray" />
         <TextInput
           style={styles.input}
-          placeholder="Username"
+          placeholder="Email"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none" 

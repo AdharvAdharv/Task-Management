@@ -29,7 +29,7 @@ export default function SignupScreen() {
         });
 
         if (res.ok) {
-          router.replace("/");
+          router.replace("/login");
         } else {
           const data = await res.json();
           alert(data.message || "Signup failed");
