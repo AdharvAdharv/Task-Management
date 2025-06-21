@@ -2,6 +2,8 @@
 
 A cross-platform task management mobile application built using **React Native** for the frontend and **NestJS (TypeScript)** for the backend. This app allows users to manage their daily tasks effectively — from signing up and logging in to adding, editing, viewing, and deleting tasks.
 
+Demo video in Youtube : https://youtube.com/shorts/TCYlh9c9sKE?si=-hfmn6yHYYsUXnNI
+
 ## 🚀 Features
 
 - 🔐 User Authentication (Login & Sign Up)
